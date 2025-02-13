@@ -47,15 +47,35 @@ public class Md5Util {
     }
 
 
+    /**
+     * 计算给定字节数组的MD5散列值
+     *
+     * @param bytes 要计算MD5散列值的字节数组
+     * @return 字节数组的MD5散列值的十六进制字符串表示
+     */
     public static String getMD5String(byte[] bytes) {
         messagedigest.update(bytes);
         return bufferToHex(messagedigest.digest());
     }
 
+    /**
+     * 将字节数组转换为十六进制字符串
+     *
+     * @param bytes 要转换的字节数组
+     * @return 转换后的十六进制字符串
+     */
     private static String bufferToHex(byte bytes[]) {
         return bufferToHex(bytes, 0, bytes.length);
     }
 
+    /**
+     * 将字节数组的指定部分转换为十六进制字符串
+     *
+     * @param bytes 要转换的字节数组
+     * @param m 转换开始位置
+     * @param n 要转换的字节数量
+     * @return 转换后的十六进制字符串
+     */
     private static String bufferToHex(byte bytes[], int m, int n) {
         StringBuffer stringbuffer = new StringBuffer(2 * n);
         int k = m + n;
@@ -65,10 +85,18 @@ public class Md5Util {
         return stringbuffer.toString();
     }
 
+    /**
+     * 将字节转换为十六进制字符并追加到字符串缓冲区
+     *
+     * @param bt 要转换的字节
+     * @param stringbuffer 追加结果的字符串缓冲区
+     */
     private static void appendHexPair(byte bt, StringBuffer stringbuffer) {
-        char c0 = hexDigits[(bt & 0xf0) >> 4];// 取字节中高 4 位的数字转换, >>>
+        // 取字节中高 4 位的数字转换, >>>
+        char c0 = hexDigits[(bt & 0xf0) >> 4];
         // 为逻辑右移，将符号位一起右移,此处未发现两种符号有何不同
-        char c1 = hexDigits[bt & 0xf];// 取字节中低 4 位的数字转换
+        char c1 = hexDigits[bt & 0xf];
+        // 取字节中低 4 位的数字转换
         stringbuffer.append(c0);
         stringbuffer.append(c1);
     }

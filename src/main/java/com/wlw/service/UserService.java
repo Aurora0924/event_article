@@ -13,5 +13,28 @@ public interface UserService {
      */
     User findByUsername(String username);
 
+    /**
+     * 注册
+     * @param username
+     * @param password
+     */
     void register(String username, String password);
+
+    /**
+     * 更新用户信息
+     * @param user
+     */
+    void update(User user);
+
+    /**
+     * 更新用户头像
+     * @param avatarUrl
+     */
+    void updateAvatar(String avatarUrl);
+
+    /**
+     * 更新用户密码
+     * @param newPwd
+     */
+    void updatePwd(String newPwd);
 }

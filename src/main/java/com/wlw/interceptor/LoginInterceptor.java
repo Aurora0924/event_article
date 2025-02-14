@@ -1,13 +1,19 @@
 package com.wlw.interceptor;
 
+import com.wlw.constant.RedisConstant;
+import com.wlw.pojo.User;
 import com.wlw.utils.JwtUtil;
 import com.wlw.utils.ThreadLocalUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author zsw
@@ -16,6 +22,9 @@ import java.util.Map;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     /**
      * 在请求处理之前进行拦截验证。
      *
@@ -29,7 +38,15 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 获取请求头中的token
         String token = request.getHeader("Authorization");
+        //1.获取当前登录用户的id
+        Map<String,Object> map = ThreadLocalUtil.get();
+
         try {
+            ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+            String redisToken = operations.get(RedisConstant.USER_TOKEN+map.get("id"));
+            if (redisToken == null || !redisToken.equals(token)){
+                return false;
+            }
             // 验证token，解析成功则放行请求
             Map<String, Object> claims = JwtUtil.parseToken(token);
             ThreadLocalUtil.set(claims);

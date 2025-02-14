@@ -1,5 +1,6 @@
 package com.wlw.controller;
 
+import com.wlw.constant.RedisConstant;
 import com.wlw.pojo.Result;
 import com.wlw.pojo.User;
 import com.wlw.service.UserService;
@@ -9,12 +10,20 @@ import com.wlw.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.ParameterResolutionDelegate;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -28,8 +37,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+
+
     @PatchMapping("/updatePwd")
-    public Result updatePwd(@RequestBody Map<String, String> params) {
+    public Result updatePwd(@RequestBody Map<String, String> params,@RequestHeader("Authorization") String token) {
         //1.校验参数
         String oldPwd = params.get("old_pwd");
         String newPwd = params.get("new_pwd");
@@ -53,6 +67,9 @@ public class UserController {
         }
         //2.调用用户服务进行密码更新
         userService.updatePwd(newPwd);
+        //删除redis中的token
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        operations.getOperations().delete(RedisConstant.USER_TOKEN+user.getId());
         return Result.success();
     }
 
@@ -141,6 +158,11 @@ public class UserController {
         claims.put("id", user.getId());
         claims.put("username", user.getUsername());
         String token = JwtUtil.genToken(claims);
+
+        ThreadLocalUtil.set(claims);
+        // 将token写入Redis时
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        operations.set(RedisConstant.USER_TOKEN+user.getId(),token, RedisConstant.USER_TOKEN_EXPIRE_TIME, TimeUnit.HOURS);
         return Result.success(token);
     }
 }

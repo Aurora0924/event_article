@@ -1,0 +1,9 @@
+#生产环境
+spring:
+  config:
+    activate:
+      on-profile: dev
+server:
+  port: 8083
+  servlet:
+    context-path: /event_article

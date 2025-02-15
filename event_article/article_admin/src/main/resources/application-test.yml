@@ -1,0 +1,9 @@
+#测试环境
+spring:
+  config:
+    activate:
+      on-profile: dev
+server:
+  port: 8082
+  servlet:
+    context-path: /test_article

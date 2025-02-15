@@ -16,8 +16,8 @@ import java.io.InputStream;
  */
 public class QiNiuYunOssUtil {
 
-    private static String accesskey = "acoK0xTB5FX1bKGpZWmjptIu3yGxfckytFPudPLV";
-    private static String secretkey = "oQUhdGtof3uuWBlbkNhD8k1eIJDfAxNC14GIgibV";
+    private static String accesskey = "";
+    private static String secretkey = "";
     private static String bucket = "envet-article";
 
     public static  String uploadFile(String objectName, InputStream inputStream) {

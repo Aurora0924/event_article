@@ -1,16 +1,35 @@
 <script setup>
-import { User, Lock, Message } from "@element-plus/icons-vue";
+// vue官方依赖引入
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+// 第三方组件依赖引入
+import { ElMessage } from "element-plus";
+import { User, Lock, Message } from "@element-plus/icons-vue";
+// 用户自定义依赖引入
+import { userRegisterService, userLoginService } from "../api/user";
+import { useTokenStore } from '../stores/store.js'
+
+//调用useTokenStore得到状态
+const tokenStore = useTokenStore();
+// 使用路由
+const router = useRouter();
 //控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false);
 
 //定义数据模型
 const registerData = ref({
-  username: "",
-  password: "",
+  username: "wangba",
+  password: "123456",
   rePassword: "",
 });
-
+//定义清空表单函数
+const clearRegisterData = () => {
+  registerData.value = {
+    username: "",
+    password: "",
+    rePassword: "",
+  };
+};
 //校验密码函数
 const checkRePassword = (rule, value, callback) => {
   if (value === "") {
@@ -41,6 +60,21 @@ const rules = {
       trigger: "blur",
     },
   ],
+};
+
+//注册函数
+const userRegister = async () => {
+  await userRegisterService(registerData.value).then((res) => {
+    ElMessage.success(res.message);
+  });
+};
+//用户登录函数
+const userLogin = async () => {
+  await userLoginService(registerData.value).then((res) => {
+    tokenStore.setToken(res.data);
+    ElMessage.success(res.message);
+    router.push("/");
+  });
 };
 </script>
 
@@ -85,30 +119,54 @@ const rules = {
         </el-form-item>
         <!-- 注册按钮 -->
         <el-form-item>
-          <el-button class="button" type="primary" auto-insert-space>
+          <el-button
+            class="button"
+            type="primary"
+            auto-insert-spac
+            @click="userRegister()"
+          >
             注册
           </el-button>
         </el-form-item>
         <el-form-item class="flex">
-          <el-link type="info" :underline="false" @click="isRegister = false">
+          <el-link
+            type="info"
+            :underline="false"
+            @click="
+              isRegister = false;
+              clearRegisterData();
+            "
+          >
             ← 返回
           </el-link>
         </el-form-item>
       </el-form>
       <!-- 登录表单 -->
-      <el-form ref="form" size="large" autocomplete="off" v-else>
+      <el-form
+        ref="form"
+        size="large"
+        autocomplete="off"
+        v-else
+        :model="registerData"
+        :rules="rules"
+      >
         <el-form-item>
           <h1>登录</h1>
         </el-form-item>
-        <el-form-item>
-          <el-input :prefix-icon="User" placeholder="请输入用户名"></el-input>
+        <el-form-item prop="username">
+          <el-input
+            :prefix-icon="User"
+            placeholder="请输入用户名"
+            v-model="registerData.username"
+          ></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="password">
           <el-input
             name="password"
             :prefix-icon="Lock"
             type="password"
             placeholder="请输入密码"
+            v-model="registerData.password"
           ></el-input>
         </el-form-item>
         <el-form-item class="flex">
@@ -119,12 +177,23 @@ const rules = {
         </el-form-item>
         <!-- 登录按钮 -->
         <el-form-item>
-          <el-button class="button" type="primary" auto-insert-space
+          <el-button
+            class="button"
+            type="primary"
+            auto-insert-space
+            @click="userLogin()"
             >登录</el-button
           >
         </el-form-item>
         <el-form-item class="flex">
-          <el-link type="info" :underline="false" @click="isRegister = true">
+          <el-link
+            type="info"
+            :underline="false"
+            @click="
+              isRegister = true;
+              clearRegisterData();
+            "
+          >
             注册 →
           </el-link>
         </el-form-item>

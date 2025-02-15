@@ -18,4 +18,4 @@ mybatis:
 ---
 #指定激活环境
 server:
-  port: 8081
+  port: 8083

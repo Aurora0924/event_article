@@ -4,6 +4,6 @@ spring:
     activate:
       on-profile: dev
 server:
-  port: 8082
+  port: 8083
   servlet:
     context-path: /test_article

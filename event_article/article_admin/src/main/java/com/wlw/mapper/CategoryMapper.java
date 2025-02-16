@@ -16,7 +16,6 @@ public interface CategoryMapper {
      *
      * @param category
      */
-    @Insert("insert into category(category_name,category_alias,create_user,create_time,update_time) values(#{categoryName},#{categoryAlias},#{createUser},now(),now())")
     void add(Category category);
 
     /**
@@ -25,7 +24,6 @@ public interface CategoryMapper {
      * @param userId
      * @return
      */
-    @Select("select * from category where create_user=#{userId}")
     List<Category> list(Integer userId);
 
     /**
@@ -34,7 +32,6 @@ public interface CategoryMapper {
      * @param id
      * @return
      */
-    @Select("select * from category where id=#{id}")
     Category findById(Integer id);
 
     /**
@@ -43,13 +40,11 @@ public interface CategoryMapper {
      * @param category
      * @return
      */
-    @Update("update category set category_name=#{categoryName},category_alias=#{categoryAlias},update_time=now() where id=#{id}")
     void update(Category category);
 
     /**
      * 删除分类
      * @param id
      */
-    @Delete("delete from category where id=#{id}")
     void delete(Integer id);
 }

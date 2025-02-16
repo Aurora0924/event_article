@@ -23,8 +23,8 @@ public class ArticleController {
      * @param id 文章ID
      * @return 删除结果
      */
-    @DeleteMapping
-    public Result delete(Integer id) {
+    @DeleteMapping("/{id}")
+    public Result delete(@PathVariable Integer id) {
         articleService.delete(id);
         return Result.success();
     }
@@ -35,7 +35,7 @@ public class ArticleController {
      * @param article 更新后的文章对象
      * @return 更新结果
      */
-    @PutMapping
+    @PutMapping("update")
     public Result update(@RequestBody @Validated(Article.Update.class) Article article) {
         articleService.update(article);
         return Result.success();
@@ -61,7 +61,7 @@ public class ArticleController {
      * @param state     文章状态，可选
      * @return 文章列表结果
      */
-    @GetMapping
+    @GetMapping("/list")
     public Result<PageBean<Article>> list(Integer pageSize, Integer pageNum, @RequestParam(required = false) Integer categoryId, @RequestParam(required = false) String state) {
         PageBean<Article> articlePageBean = articleService.list(pageSize, pageNum, categoryId, state);
         return Result.success(articlePageBean);
@@ -73,7 +73,7 @@ public class ArticleController {
      * @param article
      * @return
      */
-    @PostMapping
+    @PostMapping("/add")
     public Result add(@RequestBody @Validated(Article.Add.class) Article article) {
         articleService.add(article);
         return Result.success();

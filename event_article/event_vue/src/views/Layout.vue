@@ -9,14 +9,60 @@ import {
   SwitchButton,
   CaretBottom,
 } from "@element-plus/icons-vue";
-import avatar from "../assets/default.jpg";
+import { userInfoGetService } from "../api/user";
+import { useUserInfo } from "../stores/info";
+import { ElMessageBox, ElMessage } from "element-plus";
+import { useTokenStore } from "../stores/store";
+const tokenStore = useTokenStore();
+const userInfoStore = useUserInfo();
+
+const getUserInfo = async () => {
+  await userInfoGetService().then((res) => {
+    userInfoStore.setInfo(res.data);
+  });
+};
+
+//dropDown条目被点击后，回调的函数
+import { useRouter } from "vue-router";
+const router = useRouter();
+const handleCommand = (command) => {
+  if (command === "logout") {
+    //退出登录
+    ElMessageBox.confirm("你确认退出登录码？", "温馨提示", {
+      confirmButtonText: "确认",
+      cancelButtonText: "取消",
+      type: "warning",
+    })
+      .then(async () => {
+        //用户点击了确认
+        //清空pinia中的token和个人信息
+        userInfoStore.info = {};
+        tokenStore.token = "";
+        //跳转到登录页
+        router.push("/login");
+      })
+      .catch(() => {
+        //用户点击了取消
+        ElMessage({
+          type: "info",
+          message: "取消退出",
+        });
+      });
+  } else {
+    //路由
+    router.push("/user/" + command);
+  }
+};
+
+getUserInfo();
 </script>
 
 <template>
   <el-container class="layout-container">
     <!-- 左侧菜单 -->
     <el-aside width="200px">
-      <div class="el-aside__logo"></div>
+      <div class="el-aside__logo">
+      </div>
       <el-menu
         active-text-color="#ffd04b"
         background-color="#232323"
@@ -67,23 +113,29 @@ import avatar from "../assets/default.jpg";
     <el-container>
       <!-- 头部区域 -->
       <el-header>
-        <div>黑马程序员：<strong>东哥</strong></div>
-        <el-dropdown placement="bottom-end">
+        <div>
+          欢迎您！尊敬的用户：<strong>{{
+            userInfoStore.info.nickname
+              ? userInfoStore.info.nickname
+              : userInfoStore.info.username
+          }}</strong>
+        </div>
+        <el-dropdown placement="bottom-end" @command="handleCommand">
           <span class="el-dropdown__box">
-            <el-avatar :src="avatar" />
+            <el-avatar :src="userInfoStore.info.userPic" />
             <el-icon>
               <CaretBottom />
             </el-icon>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="profile" :icon="User"
+              <el-dropdown-item command="userInfo" :icon="User"
                 >基本资料</el-dropdown-item
               >
               <el-dropdown-item command="avatar" :icon="Crop"
                 >更换头像</el-dropdown-item
               >
-              <el-dropdown-item command="password" :icon="EditPen"
+              <el-dropdown-item command="resetPassword" :icon="EditPen"
                 >重置密码</el-dropdown-item
               >
               <el-dropdown-item command="logout" :icon="SwitchButton"
@@ -95,7 +147,7 @@ import avatar from "../assets/default.jpg";
       </el-header>
       <!-- 中间区域 -->
       <el-main>
-          <router-view></router-view>
+        <router-view></router-view>
       </el-main>
       <!-- 底部区域 -->
       <el-footer>event_article ©2025 Created by ynzhoushiwei</el-footer>
@@ -112,7 +164,7 @@ import avatar from "../assets/default.jpg";
 
     &__logo {
       height: 120px;
-      background: url("@/assets/logo.png") no-repeat center / 120px auto;
+      background: url("../assets/logo2.png") no-repeat center / 120px auto;
     }
 
     .el-menu {

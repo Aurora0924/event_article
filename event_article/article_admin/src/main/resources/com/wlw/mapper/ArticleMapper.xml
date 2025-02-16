@@ -18,4 +18,32 @@
             </if>
         </where>
     </select>
+    <!-- 添加文章 -->
+    <insert id="add" parameterType="com.wlw.pojo.Article">
+        insert into article(title, content, cover_img, category_id, create_user, state, create_time, update_time)
+        values(#{title}, #{content}, #{coverImg}, #{categoryId}, #{createUser}, #{state}, now(), now())
+    </insert>
+
+
+    <!-- 根据id查询文章 -->
+    <select id="findArticleById" resultType="com.wlw.pojo.Article">
+        select * from article where id=#{id}
+    </select>
+
+    <!-- 修改文章 -->
+    <update id="update" parameterType="com.wlw.pojo.Article">
+        update article
+        set title=#{title},
+            content=#{content},
+            cover_img=#{coverImg},
+            state=#{state},
+            category_id=#{categoryId},
+            update_time=now()
+        where id=#{id}
+    </update>
+
+    <!-- 删除文章 -->
+    <delete id="delete">
+        delete from article where id=#{id}
+    </delete>
 </mapper>

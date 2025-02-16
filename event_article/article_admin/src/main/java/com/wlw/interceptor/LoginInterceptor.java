@@ -38,12 +38,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 获取请求头中的token
         String token = request.getHeader("Authorization");
-        //1.获取当前登录用户的id
-        Map<String,Object> map = ThreadLocalUtil.get();
-
         try {
             ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-            String redisToken = operations.get(RedisConstant.USER_TOKEN+map.get("id"));
+            String redisToken = operations.get(token);
             if (redisToken == null || !redisToken.equals(token)){
                 return false;
             }

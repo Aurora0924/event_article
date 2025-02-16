@@ -6,6 +6,7 @@ const routes = [
         path: '/login',
         component: () => import('../views/Login.vue'),
     },
+
     {
         path: '/',
         component: () => import('../views/Layout.vue'),
@@ -14,7 +15,7 @@ const routes = [
             {
                 path: '/article/category',
                 component: () => import('../views/article/ArticleCategory.vue'),
-                
+
             },
             {
                 path: '/article/manage',
@@ -34,7 +35,8 @@ const routes = [
             },
 
         ]
-    }
+
+    },
 ]
 
 const router = createRouter({

@@ -7,7 +7,7 @@ import { ElMessage } from "element-plus";
 import { User, Lock, Message } from "@element-plus/icons-vue";
 // 用户自定义依赖引入
 import { userRegisterService, userLoginService } from "../api/user";
-import { useTokenStore } from '../stores/store.js'
+import { useTokenStore } from "../stores/store.js";
 
 //调用useTokenStore得到状态
 const tokenStore = useTokenStore();
@@ -19,7 +19,7 @@ const isRegister = ref(false);
 //定义数据模型
 const registerData = ref({
   username: "wangba",
-  password: "123456",
+  password: "234567",
   rePassword: "",
 });
 //定义清空表单函数
@@ -105,6 +105,7 @@ const userLogin = async () => {
           <el-input
             :prefix-icon="Lock"
             type="password"
+            show-password
             placeholder="请输入密码"
             v-model="registerData.password"
           ></el-input>
@@ -113,6 +114,7 @@ const userLogin = async () => {
           <el-input
             :prefix-icon="Lock"
             type="password"
+            show-password
             placeholder="请再次输入确认密码"
             v-model="registerData.rePassword"
           ></el-input>
@@ -166,6 +168,7 @@ const userLogin = async () => {
             :prefix-icon="Lock"
             type="password"
             placeholder="请输入密码"
+            show-password
             v-model="registerData.password"
           ></el-input>
         </el-form-item>

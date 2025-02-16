@@ -69,7 +69,7 @@ public class UserController {
         userService.updatePwd(newPwd);
         //删除redis中的token
         ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-        operations.getOperations().delete(RedisConstant.USER_TOKEN+user.getId());
+        operations.getOperations().delete(token);
         return Result.success();
     }
 
@@ -162,7 +162,7 @@ public class UserController {
         ThreadLocalUtil.set(claims);
         // 将token写入Redis时
         ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-        operations.set(RedisConstant.USER_TOKEN+user.getId(),token, RedisConstant.USER_TOKEN_EXPIRE_TIME, TimeUnit.HOURS);
+        operations.set(token,token, RedisConstant.USER_TOKEN_EXPIRE_TIME, TimeUnit.HOURS);
         return Result.success(token);
     }
 }

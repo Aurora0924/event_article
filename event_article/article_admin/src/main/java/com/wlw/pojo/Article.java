@@ -29,7 +29,6 @@ public class Article {
      * 文章标题
      */
     @NotEmpty
-    @Pattern(regexp = "^\\S{1,10}$")
     private String title;
     /**
      * 文章内容

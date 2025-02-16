@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLOutput;
 import java.util.List;
 
 /**
@@ -29,8 +28,8 @@ public class CategoryController {
      * @param id 要删除的类别ID
      * @return 表示操作结果的Result对象，此处特指删除成功
      */
-    @DeleteMapping
-    public Result delete(Integer id) {
+    @DeleteMapping("/{id}")
+    public Result delete(@PathVariable Integer id) {
         categoryService.delete(id);
         return Result.success();
     }
@@ -43,7 +42,7 @@ public class CategoryController {
      * @param category 要更新的类别对象，通过请求体传递，并且经过验证
      * @return 返回更新操作的结果，如果成功则返回成功结果
      */
-    @PutMapping
+    @PutMapping("/update")
     public Result update(@RequestBody @Validated(Category.Update.class) Category category) {
         categoryService.update(category);
         return Result.success();
@@ -68,7 +67,7 @@ public class CategoryController {
      *
      * @return 类别列表 如果没有类别信息，则返回空列表
      */
-    @GetMapping
+    @GetMapping("/list")
     public Result<List<Category>> list() {
         List<Category> categoryList = categoryService.list();
         return Result.success(categoryList);
@@ -83,7 +82,7 @@ public class CategoryController {
      * @param category 从请求体中获取的分类对象，包含要添加的分类信息
      * @return 返回添加操作的结果，成功则返回成功结果
      */
-    @PostMapping()
+    @PostMapping("/add")
     public Result add(@RequestBody @Validated(Category.Add.class) Category category) {
         categoryService.add(category);
         return Result.success();
